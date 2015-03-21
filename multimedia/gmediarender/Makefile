@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gmediarender
-PKG_VERSION:=2014-03-02
-PKG_RELEASE=$(PKG_SOURCE_VERSION)
+PKG_VERSION:=2015-03-22
+PKG_RELEASE=1.0
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=git@github.com:hzeller/gmrender-resurrect.git
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=61f5a8fe7291995fec73956c7425fdb564e3cb9f
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+#PKG_SOURCE_PROTO:=git
+#PKG_SOURCE_URL:=git@github.com:hzeller/gmrender-resurrect.git
+#PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+#PKG_SOURCE_VERSION:=61f5a8fe7291995fec73956c7425fdb564e3cb9f
+#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL=1
@@ -32,9 +32,14 @@ define Package/gmediarender
 endef
 
 define Package/gmediarender/description
-  gmediarender implements the server component that provides UPnP
+  (Yeso MODE)gmediarender implements the server component that provides UPnP
   controllers a means to render media content (audio, video and images)
   from a UPnP media server.
+endef
+
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)
+	$(CP) ./gmediarender/* $(PKG_BUILD_DIR)/
 endef
 
 CONFIGURE_ARGS+= \
