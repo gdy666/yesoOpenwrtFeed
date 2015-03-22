@@ -437,7 +437,7 @@ Copyright (C) 2012 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/yeso/yeso-feed/multimedia/gmediarender/gmediarender'
+ac_pwd='/home/yeso/sources/gmrender-resurrect'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -667,12 +667,12 @@ S["mkdir_p"]="$(MKDIR_P)"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]=""
-S["install_sh"]="${SHELL} /home/yeso/yeso-feed/multimedia/gmediarender/gmediarender/config/install-sh"
-S["MAKEINFO"]="${SHELL} /home/yeso/yeso-feed/multimedia/gmediarender/gmediarender/config/missing makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/yeso/yeso-feed/multimedia/gmediarender/gmediarender/config/missing autoheader"
-S["AUTOMAKE"]="${SHELL} /home/yeso/yeso-feed/multimedia/gmediarender/gmediarender/config/missing automake-1.14"
-S["AUTOCONF"]="${SHELL} /home/yeso/yeso-feed/multimedia/gmediarender/gmediarender/config/missing autoconf"
-S["ACLOCAL"]="${SHELL} /home/yeso/yeso-feed/multimedia/gmediarender/gmediarender/config/missing aclocal-1.14"
+S["install_sh"]="${SHELL} /home/yeso/sources/gmrender-resurrect/config/install-sh"
+S["MAKEINFO"]="${SHELL} /home/yeso/sources/gmrender-resurrect/config/missing makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/yeso/sources/gmrender-resurrect/config/missing autoheader"
+S["AUTOMAKE"]="${SHELL} /home/yeso/sources/gmrender-resurrect/config/missing automake-1.14"
+S["AUTOCONF"]="${SHELL} /home/yeso/sources/gmrender-resurrect/config/missing autoconf"
+S["ACLOCAL"]="${SHELL} /home/yeso/sources/gmrender-resurrect/config/missing aclocal-1.14"
 S["VERSION"]="0.0.7-git"
 S["PACKAGE"]="gmediarender"
 S["CYGPATH_W"]="echo"

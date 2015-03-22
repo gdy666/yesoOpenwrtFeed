@@ -325,7 +325,7 @@ static gboolean my_bus_callback(GstBus * bus, GstMessage * msg,
 			  msgSrcName, err->message, debug);
 		g_error_free(err);
 		g_free(debug);
-
+		
 		break;
 	}
 	case GST_MESSAGE_STATE_CHANGED: {
@@ -421,11 +421,16 @@ static int output_gstreamer_get_position(gint64 *track_duration,
 	*track_pos = last_known_time_.position;
 
 	int rc = 0;
-	if (get_current_player_state() != GST_STATE_PLAYING) {
-		if(get_current_player_state() == 2){
-			*track_duration = 0 ;
-			*track_pos  = 0;
-		}	
+	int state = get_current_player_state();
+	if (state != GST_STATE_PLAYING) {
+	//	printf("get_current_player_state():%d \n\n\n",get_current_player_state());
+	//	printf("GST_STATE_PLAY:%d\nGST_STATE__PAUSE:%d,GST_STATE_STOP:%d\n",GST_STATE_PLAYING,GST_STATE_PAUSE,GST_STATE_NULL);
+		if(state == GST_STATE_READY){
+			*track_duration = 0;
+			*track_pos = 0;
+		}else{
+			Log_error("gstreamer", "state:%d\n\n\n",state);
+		}
 		return rc;  // playbin2 only returns valid values then.
 	}
 #if (GST_VERSION_MAJOR < 1)
