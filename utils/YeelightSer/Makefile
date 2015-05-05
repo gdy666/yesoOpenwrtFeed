@@ -87,6 +87,10 @@ endef
 define Package/YeelightSer/install
 	$(INSTALL_DIR) 	$(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/YeelightSer $(1)/usr/sbin
+	$(INSTALL_DIR) 	$(1)/etc/init.d
+	$(CP) $(PKG_BUILD_DIR)/init.d/yeelightser $(1)/etc/init.d/
+	$(INSTALL_DIR) 	$(1)/etc/hotplug.d/iface
+	$(CP) $(PKG_BUILD_DIR)/hotplug.d/30-yeelightser $(1)/etc/hotplug.d/iface/
 	
 endef
 
