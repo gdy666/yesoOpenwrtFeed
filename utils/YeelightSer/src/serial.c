@@ -31,7 +31,12 @@ static int
 init_serial(const char* device , int open_mode)
 {
 	char dev[32];
-	sprintf(dev,"/dev/%s",device);
+	if(strchr(device,'/') == NULL){
+		sprintf(dev,"/dev/%s",device);
+	}else{
+		sprintf(dev,"%s",device);
+	}
+
 
 	LOG_TRACE("open serial: %s", dev);
 

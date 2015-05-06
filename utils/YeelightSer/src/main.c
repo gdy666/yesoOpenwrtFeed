@@ -38,11 +38,13 @@ enum{
 	M_Yeelight,	//模仿yeelight USB适配器
 };
 
+char* MODESTR[] = {"Openwrt", "Xiaomi" , "Yeelight"};
+
 char* DEMO_NAME = "YeelightSer";
 struct event_base *base = NULL;
 struct bufferevent *serial_bev = NULL;
 struct event *timer_ev = NULL;
-char devFileStr[32];
+char devFileStr[32] = {0};
 int flag = 0;	//程序结束标记
 int daemon = 0;//当daemon为1时程序在后台执行
 
@@ -146,11 +148,28 @@ int send_to_serial(const char* str){
 void http_request_handler(struct evhttp_request *req, void *arg) {
     struct evbuffer *databuf=evbuffer_new();
 
-    if(yeelight_ready){
-    	evbuffer_add_printf(databuf, "YeelightSer : Yeelight USB is ready!");
-    }else{
-    	evbuffer_add_printf(databuf, "YeelightSer : Yeelight USB is not ready!");
-    }
+    evbuffer_add_printf(databuf,"current mode: %s<br>",MODESTR[run_mode]);
+
+   switch (run_mode) {
+	case M_Openwrt:
+		 if(yeelight_ready){
+		    	evbuffer_add_printf(databuf, "YeelightSer : Yeelight USB is ready!");
+		    }else{
+		    	evbuffer_add_printf(databuf, "YeelightSer : Yeelight USB is not ready!");
+		    }
+		break;
+	case M_XiaoMi:
+		break;
+	case M_Yeelight:
+		if(XiaoMiRouter_ready){
+			evbuffer_add_printf(databuf, "YeelightSer : XiaoMi Router is ready!");
+		}else{
+			evbuffer_add_printf(databuf, "YeelightSer : XiaoMi Router is not ready!");
+		}
+		break;
+	default:
+		break;
+}
 
     evhttp_send_reply_start(req,200,"OK");
     evhttp_send_reply_chunk(req,databuf);
@@ -160,9 +179,11 @@ void http_request_handler(struct evhttp_request *req, void *arg) {
 
 void http_yeelight_serial_control_handler(struct evhttp_request *req, void *arg) {
     struct evbuffer *databuf=evbuffer_new();
+
+    evbuffer_add_printf(databuf,"current mode:%s\n",MODESTR[run_mode]);
+
     char *uri = evhttp_request_uri(req);
     char *decoded_uri = evhttp_decode_uri(uri);
-
     struct evkeyvalq params;
     evhttp_parse_query(decoded_uri, &params);
     char* cmd = evhttp_find_header(&params,"cmd");
@@ -175,7 +196,7 @@ void http_yeelight_serial_control_handler(struct evhttp_request *req, void *arg)
     		evbuffer_add_printf(databuf,"{\"state\":\"serial not ready\"}");
     	}
     }else{
-    	evbuffer_add_printf(databuf,"{\"state\":\"failed\"}");
+    	evbuffer_add_printf(databuf,"{\"state\":\"cmd error!\"}");
     }
 
     free(decoded_uri);
@@ -200,12 +221,26 @@ void set_current_mode(const char* mode){
 	}
 }
 
+
+void set_serial_devicestr(const char* serial_list){
+	/**
+	 * 防止使用"ls /dev/ttyUSB*"时候读入了多个usb串口设备,
+	 * 目前设计只支持一个串口设备,因为懒得搞...额...
+	 */
+	if(serial_list == NULL){
+		return;
+	}
+	sscanf(serial_list, "%s", devFileStr);
+	LOG_TRACE( "set to open serial on start: %s", devFileStr);
+}
+
 static void usage(){
 		fprintf(stderr, "options:\n"
 				"\t-d\trun YeelightSer at background\n"
 				"\t-h\tshow this help and exit\n"
 				"\t-k\tkill the YeelightSer Process\n"
-				"\t-mXXX set run mode ,XXX = Openwrt/Xiaomi/Yeelight\n");
+				"\t-mXXX set run mode ,XXX = Openwrt/Xiaomi/Yeelight\n"
+				"\t-s\tset a serial which will be opened on start\n");
 }
 
 
@@ -214,7 +249,7 @@ static void usage(){
  */
 static void deal_arg ( uint8_t argc , char *argv[] ) {
 	char opt;
-		while((opt=getopt(argc, argv, "dhkm:")) != -1){
+		while((opt=getopt(argc, argv, "dhkm:s::")) != -1){
 			switch ( opt ) {
 
 				case 'd'://程序在后台执行
@@ -231,6 +266,9 @@ static void deal_arg ( uint8_t argc , char *argv[] ) {
 					break;
 				case 'm':	//设置当前模式 ,Openwrt,XiaoMi,Yeelight
 					set_current_mode(optarg);
+					break;
+				case 's':	//启动的时候标记要在程序启动后立刻打开的串口
+					set_serial_devicestr(optarg);
 					break;
 				default:
 					usage();
@@ -254,6 +292,9 @@ int main(int argc , char *argv[]) {
 	struct event *hotplugEvent = hotplug_set_event(base, hotplug_msg_cb);
 	event_add(hotplugEvent, NULL);
 
+	if(strlen(devFileStr) > 0){	//程序启动的时候使用了-s参数
+		hotplug_timer_open_serial_cb(0,0,NULL);
+	}
 
 	if(run_mode == M_Yeelight){
 			/**

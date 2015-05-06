@@ -13,11 +13,11 @@
 
 enum LogLevel
 {
-	TRACE,
-	DEBUG,
-	INFO,
-	WARN,
-	ERROR,
+	L_TRACE,
+	L_DEBUG,
+	L_INFO,
+	L_WARN,
+	L_ERROR,
 };
 
 void log_set_output(const char* dest);

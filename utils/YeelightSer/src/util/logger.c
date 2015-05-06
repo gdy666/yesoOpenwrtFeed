@@ -13,7 +13,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-int current_level = TRACE;
+int current_level = L_TRACE;
 static char* logLevStr[]={"TRACE","DEBUG","INFO","WARN","ERROR"};
 
 //static void log_print(int log_level, const char* content , va_list ap);
@@ -43,7 +43,12 @@ static void log_print(int log_level,const char* file,const char* line, const cha
 	gettimeofday(&tv, &tz);
 	struct tm *p = localtime(&tv.tv_sec);
 	printf("[%d-%02d-%02d %02d:%02d:%02d.%ld]", 1900+p->tm_year, 1+p->tm_mon, p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec, tv.tv_usec);
+#ifdef DEBUG
 	printf("[%s:%d:%s]",file,line,logLevStr[log_level]);
+#else
+	printf("[%s]",logLevStr[log_level]);
+#endif
+
 
 	vprintf ( content , ap ) ;
 //	va_end ( ap ) ;
@@ -53,34 +58,34 @@ static void log_print(int log_level,const char* file,const char* line, const cha
 void log_trace(const char* file,const char* line,const char* content , ...){
 	va_list ap ;
 	va_start ( ap , content ) ;
-	log_print(TRACE,file,line,content,ap);
+	log_print(L_TRACE,file,line,content,ap);
 	va_end ( ap ) ;
 }
 
 void log_debug(const char* file,const char* line,const char* content , ...){
 	va_list ap ;
 	va_start ( ap , content ) ;
-	log_print(DEBUG,file,line,content,ap);
+	log_print(L_DEBUG,file,line,content,ap);
 	va_end ( ap ) ;
 }
 
 void log_info(const char* file,const char* line,const char* content , ...){
 	va_list ap ;
 	va_start ( ap , content ) ;
-	log_print(INFO,file,line,content,ap);
+	log_print(L_INFO,file,line,content,ap);
 	va_end ( ap ) ;
 }
 
 void log_warn(const char* file,const char* line,const char* content , ...){
 	va_list ap ;
 	va_start ( ap , content ) ;
-	log_print(WARN,file,line,content,ap);
+	log_print(L_WARN,file,line,content,ap);
 	va_end ( ap ) ;
 }
 
 void log_error(const char* file,const char* line,const char* content , ...){
 	va_list ap ;
 	va_start ( ap , content ) ;
-	log_print(ERROR,file,line,content,ap);
+	log_print(L_ERROR,file,line,content,ap);
 	va_end ( ap ) ;
 }
