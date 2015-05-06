@@ -183,10 +183,11 @@ void http_yeelight_serial_control_handler(struct evhttp_request *req, void *arg)
     evbuffer_add_printf(databuf,"current mode:%s\n",MODESTR[run_mode]);
 
     char *uri = evhttp_request_uri(req);
-    char *decoded_uri = evhttp_decode_uri(uri);
+   // char *decoded_uri = evhttp_decode_uri(uri);
     struct evkeyvalq params;
-    evhttp_parse_query(decoded_uri, &params);
+    evhttp_parse_query(uri, &params);
     char* cmd = evhttp_find_header(&params,"cmd");
+    printf("cmd:%s\n",cmd);
     if(cmd!=NULL){
     	int ret = send_to_serial(cmd);
     	send_to_serial("\n");
@@ -199,7 +200,7 @@ void http_yeelight_serial_control_handler(struct evhttp_request *req, void *arg)
     	evbuffer_add_printf(databuf,"{\"state\":\"cmd error!\"}");
     }
 
-    free(decoded_uri);
+    //free(decoded_uri);
 
     evhttp_send_reply_start(req,200,"OK");
     evhttp_send_reply_chunk(req,databuf);
