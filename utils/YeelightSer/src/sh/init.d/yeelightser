@@ -1,0 +1,19 @@
+#!/bin/sh /etc/rc.common  
+# Example script  
+# Copyright (C) 2007 OpenWrt.org  
+   
+START=99  
+   
+start() {          
+        YeelightSer -d -s"`ls /dev/ttyUSB*`"
+}
+
+restart() {          
+        YeelightSer -k
+	sleep 1
+	YeelightSer -d -s"`ls /dev/ttyUSB*`"
+}                   
+   
+stop() {            
+        YeelightSer -k  
+}  
